@@ -1,1 +1,86 @@
-/* Quantora Main Styles */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0f172a;
+    color:#ffffff;
+    font-family:Arial, Helvetica, sans-serif;
+    line-height:1.6;
+}
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 50px;
+    background:#111827;
+    border-bottom:1px solid #1f2937;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    color:#38bdf8;
+}
+
+.menu{
+    display:flex;
+    list-style:none;
+    gap:20px;
+}
+
+.menu a{
+    color:#ffffff;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.menu a:hover{
+    color:#38bdf8;
+}
+
+.hero{
+    text-align:center;
+    padding:80px 20px;
+}
+
+.hero h1{
+    font-size:48px;
+    color:#38bdf8;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:20px;
+    color:#cbd5e1;
+}
+
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+    padding:50px 20px;
+}
+
+.card{
+    background:#1e293b;
+    padding:25px;
+    border-radius:15px;
+    min-width:220px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+.card h2{
+    color:#38bdf8;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:24px;
+    font-weight:bold;
+}
