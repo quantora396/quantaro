@@ -32,11 +32,10 @@ async function loadMarket() {
 
     // DXY
     document.getElementById("dxy-price").innerHTML = "Coming Soon";
+
+    // اجرای تحلیل بعد از دریافت داده‌ها
+    runAI();
 }
-
-loadMarket();
-setInterval(loadMarket, 60000);
-
 
 // ======================
 // Quantora AI Engine
@@ -58,6 +57,11 @@ function runAI() {
             .replace(/,/g, "")
     );
 
+    // اگر داده‌ها هنوز دریافت نشده باشند
+    if (isNaN(btc) || isNaN(gold)) {
+        return;
+    }
+
     let btcTrend = "Neutral";
     let goldTrend = "Neutral";
     let recommendation = "WAIT";
@@ -78,6 +82,8 @@ function runAI() {
         recommendation = "BUY";
     } else if (btcTrend === "Bearish 📉") {
         recommendation = "SELL";
+    } else {
+        recommendation = "WAIT";
     }
 
     document.getElementById("btc-trend").innerHTML = btcTrend;
@@ -85,5 +91,8 @@ function runAI() {
     document.getElementById("recommendation").innerHTML = recommendation;
 }
 
-setTimeout(runAI, 2000);
-setInterval(runAI, 5000);
+// اجرای اولیه
+loadMarket();
+
+// بروزرسانی هر ۶۰ ثانیه
+setInterval(loadMarket, 60000);
