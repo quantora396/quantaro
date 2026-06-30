@@ -1,17 +1,45 @@
-async function loadBTC() {
+async function loadMarket() {
+
+    // BTC
     try {
-        const response = await fetch(
+        const btcResponse = await fetch(
             "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
         );
 
-        const data = await response.json();
+        const btcData = await btcResponse.json();
 
         document.getElementById("btc-price").innerHTML =
-            "$" + data.bitcoin.usd.toLocaleString();
+            "$" + btcData.bitcoin.usd.toLocaleString();
 
-    } catch (error) {
+    } catch {
         document.getElementById("btc-price").innerHTML = "Error";
     }
+
+
+    // Gold
+    try {
+        const goldResponse = await fetch(
+            "https://api.gold-api.com/price/XAU"
+        );
+
+        const goldData = await goldResponse.json();
+
+        document.getElementById("gold-price").innerHTML =
+            "$" + Math.round(goldData.price);
+
+    } catch {
+        document.getElementById("gold-price").innerHTML = "Error";
+    }
+
+
+    // DXY
+    try {
+        document.getElementById("dxy-price").innerHTML =
+            "Coming Soon";
+    } catch {
+        document.getElementById("dxy-price").innerHTML = "Error";
+    }
+
 }
 
-loadBTC();
+loadMarket();
