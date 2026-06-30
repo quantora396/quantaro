@@ -62,7 +62,7 @@ body{
     color:#cbd5e1;
 }
 
-/* Cards */
+/* Market Cards */
 
 .stats{
     display:flex;
@@ -79,11 +79,13 @@ body{
     border-radius:20px;
     text-align:center;
     box-shadow:0 10px 30px rgba(0,0,0,.35);
-    transition:.3s;
+    transition:0.3s;
+    border:1px solid #334155;
 }
 
 .card:hover{
     transform:translateY(-8px);
+    border-color:#38bdf8;
 }
 
 .card h2{
@@ -116,6 +118,7 @@ body{
     border-radius:20px;
     overflow:hidden;
     box-shadow:0 10px 30px rgba(0,0,0,.35);
+    border:1px solid #334155;
 }
 
 .chart-box iframe{
@@ -124,11 +127,57 @@ body{
     border:none;
 }
 
+/* AI Market Signal */
+
+.ai-signal{
+    width:90%;
+    margin:70px auto;
+}
+
+.ai-signal h2{
+    text-align:center;
+    color:#38bdf8;
+    font-size:36px;
+    margin-bottom:35px;
+}
+
+.signal-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.signal-card{
+    background:#1e293b;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    border:1px solid #334155;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    transition:0.3s;
+}
+
+.signal-card:hover{
+    transform:translateY(-8px);
+    border-color:#38bdf8;
+}
+
+.signal-card h3{
+    color:#38bdf8;
+    margin-bottom:18px;
+    font-size:22px;
+}
+
+.signal-card p{
+    font-size:28px;
+    font-weight:bold;
+}
+
 /* Analysis */
 
 .analysis{
     width:90%;
-    margin:60px auto;
+    margin:70px auto;
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:25px;
@@ -138,7 +187,14 @@ body{
     background:#1e293b;
     padding:30px;
     border-radius:20px;
+    border:1px solid #334155;
     box-shadow:0 10px 30px rgba(0,0,0,.35);
+    transition:0.3s;
+}
+
+.analysis-card:hover{
+    transform:translateY(-8px);
+    border-color:#38bdf8;
 }
 
 .analysis-card h2{
@@ -150,8 +206,10 @@ body{
 
 .footer{
     text-align:center;
-    padding:30px;
+    padding:35px;
     color:#94a3b8;
+    border-top:1px solid #1f2937;
+    margin-top:60px;
 }
 
 /* Responsive */
@@ -169,8 +227,12 @@ body{
         justify-content:center;
     }
 
+    .hero{
+        padding:60px 15px 40px;
+    }
+
     .hero h1{
-        font-size:48px;
+        font-size:46px;
     }
 
     .hero p{
@@ -178,10 +240,14 @@ body{
     }
 
     .card{
-        width:90%;
+        width:100%;
     }
 
     .chart-box iframe{
         height:350px;
+    }
+
+    .signal-card p{
+        font-size:24px;
     }
 }
