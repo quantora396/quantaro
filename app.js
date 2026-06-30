@@ -1,40 +1,104 @@
+// جلوگیری از اجرای همزمان
+let isLoading = false;
+
+// آخرین داده معتبر
+let lastBTC = null;
+let lastGold = null;
+
+// ======================
+// دریافت اطلاعات بازار
+// ======================
+
+async function fetchWithTimeout(url, timeout = 4000) {
+
+    const controller = new AbortController();
+
+    const timer = setTimeout(() => controller.abort(), timeout);
+
+    try {
+
+        const response = await fetch(url, {
+            signal: controller.signal
+        });
+
+        clearTimeout(timer);
+
+        return await response.json();
+
+    } catch (error) {
+
+        clearTimeout(timer);
+        throw error;
+
+    }
+
+}
+
 async function loadMarket() {
 
-    // BTC
+    if (isLoading) return;
+
+    isLoading = true;
+
     try {
-        const btcResponse = await fetch(
-            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
-        );
 
-        const btcData = await btcResponse.json();
+        // BTC
+        try {
 
-        document.getElementById("btc-price").innerHTML =
-            "$" + btcData.bitcoin.usd.toLocaleString("en-US");
+            const btcData = await fetchWithTimeout(
+                "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+            );
 
-    } catch {
-        document.getElementById("btc-price").innerHTML = "Error";
+            lastBTC = btcData.bitcoin.usd;
+
+            document.getElementById("btc-price").innerHTML =
+                "$" + lastBTC.toLocaleString("en-US");
+
+        } catch (e) {
+
+            if (lastBTC !== null) {
+
+                document.getElementById("btc-price").innerHTML =
+                    "$" + lastBTC.toLocaleString("en-US");
+
+            }
+
+        }
+
+        // Gold
+        try {
+
+            const goldData = await fetchWithTimeout(
+                "https://api.gold-api.com/price/XAU"
+            );
+
+            lastGold = Math.round(goldData.price);
+
+            document.getElementById("gold-price").innerHTML =
+                "$" + lastGold.toLocaleString("en-US");
+
+        } catch (e) {
+
+            if (lastGold !== null) {
+
+                document.getElementById("gold-price").innerHTML =
+                    "$" + lastGold.toLocaleString("en-US");
+
+            }
+
+        }
+
+        // DXY
+        document.getElementById("dxy-price").innerHTML = "Coming Soon";
+
+        runAI();
+
+    } finally {
+
+        isLoading = false;
+
     }
 
-    // Gold
-    try {
-        const goldResponse = await fetch(
-            "https://api.gold-api.com/price/XAU"
-        );
-
-        const goldData = await goldResponse.json();
-
-        document.getElementById("gold-price").innerHTML =
-            "$" + Math.round(goldData.price).toLocaleString("en-US");
-
-    } catch {
-        document.getElementById("gold-price").innerHTML = "Error";
-    }
-
-    // DXY
-    document.getElementById("dxy-price").innerHTML = "Coming Soon";
-
-    // اجرای تحلیل بعد از دریافت داده‌ها
-    runAI();
 }
 
 // ======================
@@ -43,56 +107,57 @@ async function loadMarket() {
 
 function runAI() {
 
-    const btc = Number(
-        document.getElementById("btc-price")
-            .innerText
-            .replace("$", "")
-            .replace(/,/g, "")
-    );
+    const btc = lastBTC;
+    const gold = lastGold;
 
-    const gold = Number(
-        document.getElementById("gold-price")
-            .innerText
-            .replace("$", "")
-            .replace(/,/g, "")
-    );
-
-    // اگر داده‌ها هنوز دریافت نشده باشند
-    if (isNaN(btc) || isNaN(gold)) {
-        return;
-    }
+    if (btc === null || gold === null) return;
 
     let btcTrend = "Neutral";
     let goldTrend = "Neutral";
     let recommendation = "WAIT";
 
     if (btc > 60000) {
+
         btcTrend = "Bullish 📈";
+
     } else {
+
         btcTrend = "Bearish 📉";
+
     }
 
     if (gold > 3300) {
+
         goldTrend = "Bullish 📈";
+
     } else {
+
         goldTrend = "Bearish 📉";
+
     }
 
     if (btcTrend === "Bullish 📈" && goldTrend === "Bullish 📈") {
+
         recommendation = "BUY";
+
     } else if (btcTrend === "Bearish 📉") {
+
         recommendation = "SELL";
+
     } else {
+
         recommendation = "WAIT";
+
     }
 
     document.getElementById("btc-trend").innerHTML = btcTrend;
     document.getElementById("gold-trend").innerHTML = goldTrend;
     document.getElementById("recommendation").innerHTML = recommendation;
+
 }
 
 // اجرای اولیه
 loadMarket();
 
-// بروزرسانی هر ۶۰ ثانیه
-setInterval(loadMarket, 60000);
+// بروزرسانی هر ۵ ثانیه
+setInterval(loadMarket, 5000);
