@@ -9,7 +9,7 @@ async function loadMarket() {
         const btcData = await btcResponse.json();
 
         document.getElementById("btc-price").innerHTML =
-            "$" + btcData.bitcoin.usd.toLocaleString();
+            "$" + btcData.bitcoin.usd.toLocaleString("en-US");
 
     } catch {
         document.getElementById("btc-price").innerHTML = "Error";
@@ -25,7 +25,7 @@ async function loadMarket() {
         const goldData = await goldResponse.json();
 
         document.getElementById("gold-price").innerHTML =
-            "$" + Math.round(goldData.price);
+            "$" + Math.round(goldData.price).toLocaleString("en-US");
 
     } catch {
         document.getElementById("gold-price").innerHTML = "Error";
@@ -33,12 +33,7 @@ async function loadMarket() {
 
 
     // DXY
-    try {
-        document.getElementById("dxy-price").innerHTML =
-            "Coming Soon";
-    } catch {
-        document.getElementById("dxy-price").innerHTML = "Error";
-    }
+    document.getElementById("dxy-price").innerHTML = "Coming Soon";
 
 }
 
