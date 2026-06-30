@@ -1,17 +1,17 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("Quantora AI Loaded");
+async function loadBTC() {
+    try {
+        const response = await fetch(
+            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+        );
 
-  const btn = document.getElementById("analyzeBtn");
-  const result = document.getElementById("result");
+        const data = await response.json();
 
-  if (btn && result) {
-    btn.addEventListener("click", () => {
-      result.innerHTML = `
-        <h3>Analysis Result</h3>
-        <p><strong>Trend:</strong> Bullish</p>
-        <p><strong>Confidence:</strong> 82%</p>
-        <p><strong>AI Signal:</strong> Buy</p>
-      `;
-    });
-  }
-});
+        document.getElementById("btc-price").innerHTML =
+            "$" + data.bitcoin.usd.toLocaleString();
+
+    } catch (error) {
+        document.getElementById("btc-price").innerHTML = "Error";
+    }
+}
+
+loadBTC();
