@@ -1,18 +1,18 @@
 // جلوگیری از اجرای همزمان
 let isLoading = false;
 
-// آخرین داده معتبر
+// آخرین داده‌های معتبر
 let lastBTC = null;
+let lastBTCChange = null;
 let lastGold = null;
 
 // ======================
 // دریافت اطلاعات بازار
 // ======================
 
-async function fetchWithTimeout(url, timeout = 4000) {
+async function fetchWithTimeout(url, timeout = 5000) {
 
     const controller = new AbortController();
-
     const timer = setTimeout(() => controller.abort(), timeout);
 
     try {
@@ -23,16 +23,24 @@ async function fetchWithTimeout(url, timeout = 4000) {
 
         clearTimeout(timer);
 
+        if (!response.ok) {
+            throw new Error("API Error");
+        }
+
         return await response.json();
 
-    } catch (error) {
+    } catch (err) {
 
         clearTimeout(timer);
-        throw error;
+        throw err;
 
     }
 
 }
+
+// ======================
+// دریافت اطلاعات بازار
+// ======================
 
 async function loadMarket() {
 
@@ -46,13 +54,23 @@ async function loadMarket() {
         try {
 
             const btcData = await fetchWithTimeout(
-                "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+                "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
             );
 
             lastBTC = btcData.bitcoin.usd;
+            lastBTCChange = btcData.bitcoin.usd_24h_change;
 
-            document.getElementById("btc-price").innerHTML =
-                "$" + lastBTC.toLocaleString("en-US");
+            const btcElement = document.getElementById("btc-price");
+
+            btcElement.innerHTML =
+                "$" +
+                lastBTC.toLocaleString("en-US") +
+                "<br><small>" +
+                lastBTCChange.toFixed(2) +
+                "% (24h)</small>";
+
+            btcElement.style.color =
+                lastBTCChange >= 0 ? "#22c55e" : "#ef4444";
 
         } catch (e) {
 
@@ -65,7 +83,7 @@ async function loadMarket() {
 
         }
 
-        // Gold
+        // GOLD
         try {
 
             const goldData = await fetchWithTimeout(
@@ -99,34 +117,31 @@ async function loadMarket() {
 
     }
 
-}
-
-// ======================
+}// ======================
 // Quantora AI Engine
 // ======================
 
 function runAI() {
 
-    const btc = lastBTC;
-    const gold = lastGold;
-
-    if (btc === null || gold === null) return;
+    if (lastBTC === null || lastGold === null) return;
 
     let btcTrend = "Neutral";
     let goldTrend = "Neutral";
     let recommendation = "WAIT";
 
-    if (btc > 60000) {
+    // تحلیل BTC بر اساس تغییرات 24 ساعته
+    if (lastBTCChange > 2) {
 
         btcTrend = "Bullish 📈";
 
-    } else {
+    } else if (lastBTCChange < -2) {
 
         btcTrend = "Bearish 📉";
 
     }
 
-    if (gold > 3300) {
+    // تحلیل Gold
+    if (lastGold > 3300) {
 
         goldTrend = "Bullish 📈";
 
@@ -136,28 +151,38 @@ function runAI() {
 
     }
 
+    // پیشنهاد AI
     if (btcTrend === "Bullish 📈" && goldTrend === "Bullish 📈") {
 
-        recommendation = "BUY";
+        recommendation = "BUY 🟢";
 
     } else if (btcTrend === "Bearish 📉") {
 
-        recommendation = "SELL";
+        recommendation = "SELL 🔴";
 
     } else {
 
-        recommendation = "WAIT";
+        recommendation = "HOLD 🟡";
 
     }
 
-    document.getElementById("btc-trend").innerHTML = btcTrend;
-    document.getElementById("gold-trend").innerHTML = goldTrend;
-    document.getElementById("recommendation").innerHTML = recommendation;
+    const btcTrendElement = document.getElementById("btc-trend");
+    const goldTrendElement = document.getElementById("gold-trend");
+    const recommendationElement = document.getElementById("recommendation");
 
-}
+    btcTrendElement.innerHTML = btcTrend;
+    goldTrendElement.innerHTML = goldTrend;
+    recommendationElement.innerHTML = recommendation;
 
-// اجرای اولیه
-loadMarket();
+    // رنگ‌بندی
+    btcTrendElement.style.color =
+        btcTrend.includes("Bullish") ? "#22c55e" : "#ef4444";
 
-// بروزرسانی هر ۵ ثانیه
-setInterval(loadMarket, 5000);
+    goldTrendElement.style.color =
+        goldTrend.includes("Bullish") ? "#22c55e" : "#ef4444";
+
+    if (recommendation.includes("BUY")) {
+
+        recommendationElement.style.color = "#22c55e";
+
+    } else if (
