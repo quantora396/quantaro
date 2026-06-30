@@ -1,70 +1,130 @@
 /* ==========================================
-   Quantora AI
+   Quantora AI v2
 ========================================== */
 
 function runAI() {
 
-    let btcTrend = "WAIT";
-    let goldTrend = "WAIT";
-    let recommendation = "WAIT";
+    let score = 0;
+
+    // ======================
+    // Bitcoin
+    // ======================
 
     if (market.btc !== null) {
 
         if (market.btc >= 100000) {
 
-            btcTrend = "Bullish 📈";
+            market.btcTrend = "Bullish 📈";
+            score += 2;
+
+        } else if (market.btc >= 95000) {
+
+            market.btcTrend = "Neutral ➖";
+            score += 1;
 
         } else {
 
-            btcTrend = "Bearish 📉";
+            market.btcTrend = "Bearish 📉";
+            score -= 2;
 
         }
 
+    } else {
+
+        market.btcTrend = "No Data";
+
     }
+
+    // ======================
+    // Gold
+    // ======================
 
     if (market.gold !== null) {
 
         if (market.gold >= 3300) {
 
-            goldTrend = "Bullish 📈";
+            market.goldTrend = "Bullish 📈";
+            score += 1;
+
+        } else if (market.gold >= 3200) {
+
+            market.goldTrend = "Neutral ➖";
 
         } else {
 
-            goldTrend = "Bearish 📉";
+            market.goldTrend = "Bearish 📉";
+            score -= 1;
+
+        }
+
+    } else {
+
+        market.goldTrend = "No Data";
+
+    }
+
+    // ======================
+    // Market Fear Index
+    // ======================
+
+    if (market.fear !== null) {
+
+        if (market.fear < 30) {
+
+            score += 2;
+
+        } else if (market.fear > 70) {
+
+            score -= 2;
 
         }
 
     }
 
-    if (
+    // ======================
+    // Dollar Index
+    // ======================
 
-        btcTrend === "Bullish 📈" &&
-        goldTrend === "Bullish 📈"
+    if (market.dxy !== null) {
 
-    ) {
+        if (market.dxy > 105) {
 
-        recommendation = "BUY 🟢";
+            score -= 1;
 
-    }
+        } else if (market.dxy < 102) {
 
-    else if (
+            score += 1;
 
-        btcTrend === "Bearish 📉"
-
-    ) {
-
-        recommendation = "SELL 🔴";
+        }
 
     }
 
-    else {
+    // ======================
+    // Final Recommendation
+    // ======================
 
-        recommendation = "WAIT 🟡";
+    if (score >= 4) {
+
+        market.recommendation = "STRONG BUY 🟢🟢";
+
+    } else if (score >= 2) {
+
+        market.recommendation = "BUY 🟢";
+
+    } else if (score <= -4) {
+
+        market.recommendation = "STRONG SELL 🔴🔴";
+
+    } else if (score <= -2) {
+
+        market.recommendation = "SELL 🔴";
+
+    } else {
+
+        market.recommendation = "WAIT 🟡";
 
     }
 
-    market.btcTrend = btcTrend;
-    market.goldTrend = goldTrend;
-    market.recommendation = recommendation;
+    market.aiScore = score;
 
 }
