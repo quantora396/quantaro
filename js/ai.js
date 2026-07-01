@@ -1,23 +1,18 @@
 /*
 ====================================
-        Quantora AI Engine v2
+        Quantora AI Engine v3
 ====================================
 */
 
 const ai = {
 
     score: 0,
-
-    confidence: "Low",
-
+    confidence: "0%",
     signal: "WAIT",
 
     technicalScore: 0,
-
     fundamentalScore: 0,
-
     smartMoneyScore: 0,
-
     riskScore: 0,
 
     reasons: []
@@ -27,15 +22,10 @@ const ai = {
 function resetAI() {
 
     ai.score = 0;
-
     ai.technicalScore = 0;
-
     ai.fundamentalScore = 0;
-
     ai.smartMoneyScore = 0;
-
     ai.riskScore = 0;
-
     ai.reasons = [];
 
 }
@@ -45,38 +35,61 @@ function calculateAIScore() {
     resetAI();
 
     // ==========================
-    // BTC Analysis
+    // Bitcoin
     // ==========================
 
-    if (market.btcTrend === "Bullish 📈") {
+    if (market.btc >= 110000) {
+
+        ai.technicalScore += 35;
+        ai.reasons.push("BTC extremely bullish");
+
+    }
+
+    else if (market.btc >= 100000) {
 
         ai.technicalScore += 25;
+        ai.reasons.push("BTC bullish");
 
-        ai.reasons.push("Bitcoin Trend Bullish");
+    }
 
-    } else {
+    else if (market.btc >= 95000) {
 
-        ai.technicalScore -= 15;
+        ai.technicalScore += 15;
+        ai.reasons.push("BTC neutral");
 
-        ai.riskScore += 15;
+    }
 
-        ai.reasons.push("Bitcoin Trend Bearish");
+    else {
+
+        ai.technicalScore -= 20;
+        ai.riskScore += 20;
+        ai.reasons.push("BTC bearish");
 
     }
 
     // ==========================
-    // Gold Analysis
+    // Gold
     // ==========================
 
-    if (market.goldTrend === "Bullish 📈") {
+    if (market.gold >= 3400) {
 
         ai.fundamentalScore += 20;
+        ai.reasons.push("Gold demand rising");
 
-        ai.reasons.push("Gold Market Strong");
+    }
 
-    } else {
+    else if (market.gold >= 3300) {
 
-        ai.fundamentalScore += 5;
+        ai.fundamentalScore += 10;
+        ai.reasons.push("Gold stable");
+
+    }
+
+    else {
+
+        ai.fundamentalScore -= 10;
+        ai.riskScore += 10;
+        ai.reasons.push("Gold weak");
 
     }
 
@@ -84,9 +97,28 @@ function calculateAIScore() {
     // Smart Money
     // ==========================
 
-    ai.smartMoneyScore += 20;
+    if (market.btcTrend === "Bullish 📈") {
 
-    ai.reasons.push("Institutional Activity Stable");
+        ai.smartMoneyScore += 25;
+        ai.reasons.push("Institutional accumulation");
+
+    } else {
+
+        ai.smartMoneyScore += 5;
+        ai.riskScore += 10;
+        ai.reasons.push("Institutional caution");
+
+    }
+
+    // ==========================
+    // Risk
+    // ==========================
+
+    if (ai.riskScore >= 30) {
+
+        ai.reasons.push("High market risk");
+
+    }
 
     // ==========================
     // Final Score
@@ -105,47 +137,53 @@ function calculateAIScore() {
         ai.score = 0;
 
     // ==========================
-    // Confidence
+    // Signal
     // ==========================
 
-    if (ai.score >= 80) {
+    if (ai.score >= 85) {
 
         ai.signal = "STRONG BUY 🟢";
 
-        ai.confidence = "Very High";
-
     }
 
-    else if (ai.score >= 60) {
+    else if (ai.score >= 70) {
 
         ai.signal = "BUY 🟢";
 
-        ai.confidence = "High";
-
     }
 
-    else if (ai.score >= 40) {
+    else if (ai.score >= 50) {
 
         ai.signal = "HOLD 🟡";
 
-        ai.confidence = "Medium";
+    }
+
+    else if (ai.score >= 30) {
+
+        ai.signal = "SELL 🔴";
 
     }
 
     else {
 
-        ai.signal = "SELL 🔴";
-
-        ai.confidence = "Low";
+        ai.signal = "STRONG SELL ⚫";
 
     }
 
-    console.log("AI Score:", ai.score);
+    // ==========================
+    // Confidence
+    // ==========================
 
+    ai.confidence = ai.score + "%";
+
+    console.log("========== QUANTORA AI ==========");
+    console.log("Score:", ai.score);
     console.log("Signal:", ai.signal);
-
     console.log("Confidence:", ai.confidence);
-
+    console.log("Technical:", ai.technicalScore);
+    console.log("Fundamental:", ai.fundamentalScore);
+    console.log("Smart Money:", ai.smartMoneyScore);
+    console.log("Risk:", ai.riskScore);
     console.log(ai.reasons);
 
 }
