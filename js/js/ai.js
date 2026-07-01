@@ -34,3 +34,49 @@ function resetAI() {
 function addReason(text) {
     ai.reasons.push(text);
 }
+// ====================================
+// Main AI Analysis
+// ====================================
+
+function analyzeAI() {
+
+    resetAI();
+
+    // BTC Analysis
+    if (typeof lastBTC !== "undefined" && lastBTC > 100000) {
+        ai.technicalScore += 20;
+        addReason("BTC price is strong.");
+    } else {
+        ai.technicalScore -= 10;
+        addReason("BTC is below bullish zone.");
+    }
+
+    // Gold Analysis
+    if (typeof lastGold !== "undefined" && lastGold > 3000) {
+        ai.fundamentalScore += 20;
+        addReason("Gold remains strong.");
+    }
+
+    // Total Score
+    ai.score =
+        ai.technicalScore +
+        ai.fundamentalScore +
+        ai.smartMoneyScore -
+        ai.riskScore;
+
+    // Signal
+    if (ai.score >= 30) {
+        ai.signal = "BUY";
+        ai.confidence = "High";
+    }
+    else if (ai.score >= 10) {
+        ai.signal = "HOLD";
+        ai.confidence = "Medium";
+    }
+    else {
+        ai.signal = "SELL";
+        ai.confidence = "Low";
+    }
+
+    console.log("Quantora AI:", ai);
+}
