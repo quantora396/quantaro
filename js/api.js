@@ -239,6 +239,16 @@ async function loadMarket() {
 
     market.lastUpdate = new Date();
 
+    window.lastBTC = market.btc;
+    window.lastGold = market.gold;
+    window.lastBTCChange = market.btcChange;
+
+    if (typeof updateUI === "function") {
+        updateUI();
+    }
+
+}
+
 }// ================================
 // Market Helpers
 // ================================
