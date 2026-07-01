@@ -1,34 +1,34 @@
 /*
 ====================================
-    Quantora UI
+        Quantora UI v2
 ====================================
 */
 
 function updateUI() {
 
-    if (market.btc !== null) {
+    // قیمت‌ها
+    if (typeof lastBTC !== "undefined" && lastBTC !== null) {
         document.getElementById("btc-price").innerHTML =
-            "$" + Number(market.btc).toLocaleString("en-US");
+            "$" + lastBTC.toLocaleString("en-US");
     }
 
-    if (market.gold !== null) {
+    if (typeof lastGold !== "undefined" && lastGold !== null) {
         document.getElementById("gold-price").innerHTML =
-            "$" + Number(market.gold).toLocaleString("en-US");
+            "$" + lastGold.toLocaleString("en-US");
     }
 
-    if (market.btcTrend) {
-        document.getElementById("btc-trend").innerHTML =
-            market.btcTrend;
-    }
+    // خروجی AI
+    if (typeof ai !== "undefined") {
 
-    if (market.goldTrend) {
-        document.getElementById("gold-trend").innerHTML =
-            market.goldTrend;
-    }
+        if (document.getElementById("btc-trend"))
+            document.getElementById("btc-trend").innerHTML = ai.reasons[0] || "-";
 
-    if (market.recommendation) {
-        document.getElementById("recommendation").innerHTML =
-            market.recommendation;
+        if (document.getElementById("gold-trend"))
+            document.getElementById("gold-trend").innerHTML = ai.reasons[1] || "-";
+
+        if (document.getElementById("recommendation"))
+            document.getElementById("recommendation").innerHTML = ai.signal;
+
     }
 
 }
