@@ -577,5 +577,96 @@ body{
 ========================== */
 
 .footer{
+/* =====================================
+        Responsive Design
+===================================== */
 
+/* Tablet */
+@media (max-width: 992px){
+
+    .navbar{
+        padding:16px 25px;
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .menu{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:18px;
+    }
+
+    .hero h1{
+        font-size:48px;
+    }
+
+    .hero p{
+        font-size:18px;
+    }
+
+    .chart-box iframe{
+        height:450px;
+    }
+
+}
+
+/* Mobile */
+@media (max-width:768px){
+
+    .hero{
+        padding:70px 20px;
+    }
+
+    .hero h1{
+        font-size:36px;
+        line-height:1.2;
+    }
+
+    .hero p{
+        font-size:16px;
+    }
+
+    .stats,
+    .signal-grid,
+    .analysis{
+        grid-template-columns:1fr;
+    }
+
+    .card,
+    .signal-card,
+    .analysis-card{
+        padding:22px;
+    }
+
+    .chart-box iframe{
+        height:320px;
+    }
+
+    .navbar{
+        padding:15px;
+    }
+
+    .logo{
+        font-size:24px;
+    }
+
+}
+
+/* Small Mobile */
+@media (max-width:480px){
+
+    .hero h1{
+        font-size:30px;
+    }
+
+    .hero p{
+        font-size:15px;
+    }
+
+    .btn{
+        width:100%;
+        text-align:center;
+    }
+
+}
     margin-top:80
