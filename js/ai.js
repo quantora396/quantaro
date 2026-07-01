@@ -67,31 +67,52 @@ function calculateAIScore() {
 
     }
 
-    // ==========================
-    // Gold
-    // ==========================
+// ==========================
+// Gold
+// ==========================
 
-    if (market.gold >= 3400) {
+if (market.gold !== null) {
 
-        ai.fundamentalScore += 20;
-        ai.reasons.push("Gold demand rising");
+    if (market.gold >= 3500) {
+
+        ai.technicalScore += 30;
+        ai.smartMoneyScore += 20;
+        ai.reasons.push("Gold extremely bullish");
 
     }
 
     else if (market.gold >= 3300) {
 
-        ai.fundamentalScore += 10;
+        ai.technicalScore += 20;
+        ai.smartMoneyScore += 10;
+        ai.reasons.push("Gold bullish");
+
+    }
+
+    else if (market.gold >= 3000) {
+
+        ai.technicalScore += 10;
         ai.reasons.push("Gold stable");
+
+    }
+
+    else if (market.gold >= 2800) {
+
+        ai.technicalScore -= 5;
+        ai.riskScore += 10;
+        ai.reasons.push("Gold weakening");
 
     }
 
     else {
 
-        ai.fundamentalScore -= 10;
-        ai.riskScore += 10;
-        ai.reasons.push("Gold weak");
+        ai.technicalScore -= 15;
+        ai.riskScore += 20;
+        ai.reasons.push("Gold bearish");
 
     }
+
+}
 
     // ==========================
     // Smart Money
