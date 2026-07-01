@@ -9,9 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadMarket();
 
-    setInterval(() => {
-        loadMarket();
-    }, 60000);
+updateAI();
+
+setInterval(() => {
+
+    loadMarket();
+
+    updateAI();
+
+}, 60000);
 
 });
 // ======================
