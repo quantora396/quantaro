@@ -5,19 +5,19 @@
 ====================================
 */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    loadMarket();
-
-updateAI();
-
-setInterval(() => {
-
-    loadMarket();
+    await loadMarket();
 
     updateAI();
 
-}, 60000);
+    setInterval(async () => {
+
+        await loadMarket();
+
+        updateAI();
+
+    }, 60000);
 
 });
 // ======================
