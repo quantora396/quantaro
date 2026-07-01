@@ -1,6 +1,6 @@
 /*
 ==========================================
-        Quantora API Engine v1
+        Quantora API Engine v2
 ==========================================
 */
 
@@ -17,6 +17,20 @@ const API = {
     GOLD: "https://api.gold-api.com/price/XAU",
 
     DXY: null
+
+};
+
+// ================================
+// Configuration
+// ================================
+
+const CONFIG = {
+
+    timeout: 5000,
+
+    retries: 3,
+
+    refreshInterval: 60000
 
 };
 
@@ -54,15 +68,21 @@ const cache = {
 
     btc: null,
 
+    btcChange: null,
+
     gold: null,
 
-    dxy: null
+    dxy: null,
 
-};// ================================
+    lastUpdate: null
+
+};
+
+// ================================
 // Fetch With Timeout
 // ================================
 
-async function fetchWithTimeout(url, timeout = 5000) {
+async function fetchWithTimeout(url, timeout = CONFIG.timeout) {
 
     if (!url) return null;
 
@@ -94,13 +114,11 @@ async function fetchWithTimeout(url, timeout = 5000) {
 
         return await response.json();
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         clearTimeout(timer);
 
-        console.error(error);
+        console.error("Fetch Error:", error);
 
         return null;
 
@@ -109,42 +127,71 @@ async function fetchWithTimeout(url, timeout = 5000) {
 }
 
 // ================================
+// Retry Helper
+// ================================
+
+async function fetchWithRetry(url) {
+
+    for (let i = 0; i < CONFIG.retries; i++) {
+
+        const data = await fetchWithTimeout(url);
+
+        if (data) {
+
+            return data;
+
+        }
+
+    }
+
+    return null;
+
+}// ================================
 // Bitcoin
 // ================================
 
 async function loadBTC() {
 
-    const data = await fetchWithTimeout(API.BTC);
+    const data = await fetchWithRetry(API.BTC);
 
-    if (!data || !data.bitcoin) {
+    if (data && data.bitcoin) {
 
-        return;
+        market.btc = data.bitcoin.usd;
+        market.btcChange = data.bitcoin.usd_24h_change;
+
+        cache.btc = market.btc;
+        cache.btcChange = market.btcChange;
+        cache.lastUpdate = new Date();
+
+    } else if (cache.btc !== null) {
+
+        market.btc = cache.btc;
+        market.btcChange = cache.btcChange;
 
     }
 
-    market.btc = data.bitcoin.usd;
+}
 
-    market.btcChange = data.bitcoin.usd_24h_change;
-
-    cache.btc = market.btc;
-
-}// ================================
+// ================================
 // Gold
 // ================================
 
 async function loadGold() {
 
-    const data = await fetchWithTimeout(API.GOLD);
+    const data = await fetchWithRetry(API.GOLD);
 
-    if (!data || !data.price) {
+    if (data && data.price) {
 
-        return;
+        market.gold = Math.round(data.price);
+
+        cache.gold = market.gold;
+        cache.lastUpdate = new Date();
+
+    } else if (cache.gold !== null) {
+
+        market.gold = cache.gold;
 
     }
-
-    market.gold = Math.round(data.price);
-
-    cache.gold = market.gold;
 
 }
 
@@ -156,23 +203,25 @@ async function loadDXY() {
 
     if (!API.DXY) {
 
-        market.dxy = null;
-
+        market.dxy = cache.dxy ?? null;
         return;
 
     }
 
-    const data = await fetchWithTimeout(API.DXY);
+    const data = await fetchWithRetry(API.DXY);
 
-    if (!data) {
+    if (data) {
 
-        return;
+        market.dxy = data.price ?? null;
+
+        cache.dxy = market.dxy;
+        cache.lastUpdate = new Date();
+
+    } else if (cache.dxy !== null) {
+
+        market.dxy = cache.dxy;
 
     }
-
-    market.dxy = data.price ?? null;
-
-    cache.dxy = market.dxy;
 
 }
 
@@ -183,13 +232,9 @@ async function loadDXY() {
 async function loadMarket() {
 
     await Promise.all([
-
         loadBTC(),
-
         loadGold(),
-
         loadDXY()
-
     ]);
 
     market.lastUpdate = new Date();
@@ -209,13 +254,9 @@ function getMarketSnapshot() {
     return {
 
         btc: market.btc,
-
         btcChange: market.btcChange,
-
         gold: market.gold,
-
         dxy: market.dxy,
-
         lastUpdate: market.lastUpdate
 
     };
@@ -235,6 +276,22 @@ async function refreshMarket() {
 }
 
 // ================================
+// Auto Refresh
+// ================================
+
+async function startMarketEngine() {
+
+    await loadMarket();
+
+    setInterval(async () => {
+
+        await loadMarket();
+
+    }, CONFIG.refreshInterval);
+
+}
+
+// ================================
 // Public API
 // ================================
 
@@ -248,9 +305,21 @@ window.QuantoraAPI = {
 
     snapshot: getMarketSnapshot,
 
-    ready: hasMarketData
+    ready: hasMarketData,
+
+    start: startMarketEngine
 
 };
+
+// ================================
+// Auto Start
+// ================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    startMarketEngine();
+
+});
 
 // ================================
 // End Of File
