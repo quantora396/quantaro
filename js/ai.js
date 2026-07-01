@@ -1,130 +1,151 @@
-/* ==========================================
-   Quantora AI v2
-========================================== */
+/*
+====================================
+        Quantora AI Engine v2
+====================================
+*/
 
-function runAI() {
+const ai = {
 
-    let score = 0;
+    score: 0,
 
-    // ======================
-    // Bitcoin
-    // ======================
+    confidence: "Low",
 
-    if (market.btc !== null) {
+    signal: "WAIT",
 
-        if (market.btc >= 100000) {
+    technicalScore: 0,
 
-            market.btcTrend = "Bullish 📈";
-            score += 2;
+    fundamentalScore: 0,
 
-        } else if (market.btc >= 95000) {
+    smartMoneyScore: 0,
 
-            market.btcTrend = "Neutral ➖";
-            score += 1;
+    riskScore: 0,
 
-        } else {
+    reasons: []
 
-            market.btcTrend = "Bearish 📉";
-            score -= 2;
+};
 
-        }
+function resetAI() {
 
-    } else {
+    ai.score = 0;
 
-        market.btcTrend = "No Data";
+    ai.technicalScore = 0;
 
-    }
+    ai.fundamentalScore = 0;
 
-    // ======================
-    // Gold
-    // ======================
+    ai.smartMoneyScore = 0;
 
-    if (market.gold !== null) {
+    ai.riskScore = 0;
 
-        if (market.gold >= 3300) {
+    ai.reasons = [];
 
-            market.goldTrend = "Bullish 📈";
-            score += 1;
+}
 
-        } else if (market.gold >= 3200) {
+function calculateAIScore() {
 
-            market.goldTrend = "Neutral ➖";
+    resetAI();
 
-        } else {
+    // ==========================
+    // BTC Analysis
+    // ==========================
 
-            market.goldTrend = "Bearish 📉";
-            score -= 1;
+    if (market.btcTrend === "Bullish 📈") {
 
-        }
+        ai.technicalScore += 25;
+
+        ai.reasons.push("Bitcoin Trend Bullish");
 
     } else {
 
-        market.goldTrend = "No Data";
+        ai.technicalScore -= 15;
+
+        ai.riskScore += 15;
+
+        ai.reasons.push("Bitcoin Trend Bearish");
 
     }
 
-    // ======================
-    // Market Fear Index
-    // ======================
+    // ==========================
+    // Gold Analysis
+    // ==========================
 
-    if (market.fear !== null) {
+    if (market.goldTrend === "Bullish 📈") {
 
-        if (market.fear < 30) {
+        ai.fundamentalScore += 20;
 
-            score += 2;
-
-        } else if (market.fear > 70) {
-
-            score -= 2;
-
-        }
-
-    }
-
-    // ======================
-    // Dollar Index
-    // ======================
-
-    if (market.dxy !== null) {
-
-        if (market.dxy > 105) {
-
-            score -= 1;
-
-        } else if (market.dxy < 102) {
-
-            score += 1;
-
-        }
-
-    }
-
-    // ======================
-    // Final Recommendation
-    // ======================
-
-    if (score >= 4) {
-
-        market.recommendation = "STRONG BUY 🟢🟢";
-
-    } else if (score >= 2) {
-
-        market.recommendation = "BUY 🟢";
-
-    } else if (score <= -4) {
-
-        market.recommendation = "STRONG SELL 🔴🔴";
-
-    } else if (score <= -2) {
-
-        market.recommendation = "SELL 🔴";
+        ai.reasons.push("Gold Market Strong");
 
     } else {
 
-        market.recommendation = "WAIT 🟡";
+        ai.fundamentalScore += 5;
 
     }
 
-    market.aiScore = score;
+    // ==========================
+    // Smart Money
+    // ==========================
+
+    ai.smartMoneyScore += 20;
+
+    ai.reasons.push("Institutional Activity Stable");
+
+    // ==========================
+    // Final Score
+    // ==========================
+
+    ai.score =
+        ai.technicalScore +
+        ai.fundamentalScore +
+        ai.smartMoneyScore -
+        ai.riskScore;
+
+    if (ai.score > 100)
+        ai.score = 100;
+
+    if (ai.score < 0)
+        ai.score = 0;
+
+    // ==========================
+    // Confidence
+    // ==========================
+
+    if (ai.score >= 80) {
+
+        ai.signal = "STRONG BUY 🟢";
+
+        ai.confidence = "Very High";
+
+    }
+
+    else if (ai.score >= 60) {
+
+        ai.signal = "BUY 🟢";
+
+        ai.confidence = "High";
+
+    }
+
+    else if (ai.score >= 40) {
+
+        ai.signal = "HOLD 🟡";
+
+        ai.confidence = "Medium";
+
+    }
+
+    else {
+
+        ai.signal = "SELL 🔴";
+
+        ai.confidence = "Low";
+
+    }
+
+    console.log("AI Score:", ai.score);
+
+    console.log("Signal:", ai.signal);
+
+    console.log("Confidence:", ai.confidence);
+
+    console.log(ai.reasons);
 
 }
