@@ -321,15 +321,6 @@ window.QuantoraAPI = {
 
 };
 
-// ================================
-// Auto Start
-// ================================
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    startMarketEngine();
-
-});
 
 // ================================
 // End Of File
