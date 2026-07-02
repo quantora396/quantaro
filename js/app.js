@@ -82,18 +82,22 @@ if (typeof loadMarket === "function") {
     marketLoaded = await loadMarket();
 } 
 
-        if (typeof runAI === "function") {
+        
+if (marketLoaded !== false) {
 
-            runAI();
+    if (typeof runAI === "function") {
+        runAI();
+    }
 
-        }
+    if (typeof updateUI === "function") {
+        updateUI();
+    }
 
-        if (typeof updateUI === "function") {
+} else {
 
-            updateUI();
+    console.warn("Market data was not loaded.");
 
-        }
-
+}
     } catch (error) {
 
         console.error("Refresh Error:", error);
