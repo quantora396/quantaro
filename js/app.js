@@ -101,7 +101,7 @@ async function refreshSystem() {
     } finally {
 
         App.refreshing = false;
-
+    }
     }
 // ================================
 // Helpers
