@@ -243,9 +243,7 @@ async function loadMarket() {
     window.lastGold = market.gold;
     window.lastBTCChange = market.btcChange;
 
-    if (typeof updateUI === "function") {
-        updateUI();
-    }
+    
 
 }
 
