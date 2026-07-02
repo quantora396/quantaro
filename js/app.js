@@ -187,6 +187,7 @@ window.quantora = {
     status: getAppStatus,
 
     version: App.version
+            };
 // ================================
 // Events
 // ================================
