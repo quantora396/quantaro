@@ -103,8 +103,7 @@ async function refreshSystem() {
         App.refreshing = false;
 
     }
-
-}// ================================
+// ================================
 // Helpers
 // ================================
 
@@ -225,7 +224,7 @@ window.addEventListener("beforeunload", () => {
     logInfo("Quantora Closed");
 
 });
-};// ================================
+// ================================
 // Error Handler
 // ================================
 
