@@ -76,11 +76,11 @@ async function refreshSystem() {
 
     try {
 
-        if (typeof loadMarket === "function") {
+       let marketLoaded = true;
 
-            await loadMarket();
-
-        }
+if (typeof loadMarket === "function") {
+    marketLoaded = await loadMarket();
+} 
 
         if (typeof runAI === "function") {
 
